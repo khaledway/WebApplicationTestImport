@@ -1,5 +1,4 @@
 ﻿
-
 namespace WebApplicationTestImport
 {
     using System;
@@ -13,118 +12,85 @@ namespace WebApplicationTestImport
 
     public class ProductsController : ApiController
     {
-
-        Product[] products = new Product[]
-        {
-            new Product { Id = 1, Name = "Tomato Soup", Category = "Groceries", Price = 1 },
-            new Product { Id = 2, Name = "Yo-yo", Category = "Toys", Price = 3.75M },
-            new Product { Id = 3, Name = "Hammer", Category = "Hardware", Price = 16.99M }
-        };
-
-        public IEnumerable<Product> GetAllProducts()
-        {
-            return products;
-        }
-
-        public Product GetProductById(int id)
-        {
-            var product = products.FirstOrDefault((p) => p.Id == id);
-            if (product == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
-            return product;
-        }
-
-        public IEnumerable<Product> GetProductsByCategory(string category)
-        {
-            return products.Where(
-                (p) => string.Equals(p.Category, category,
-                    StringComparison.OrdinalIgnoreCase));
-        }
-
-
         [HttpPost]
-        public void PostAssets(List<Asset> assets)
+        public ReturnResponse PostAssets(List<Asset> assets)
         {
-
+            ReturnResponse returnResponse = null;
             try
             {
-                string connection =
-        System.Configuration.ConfigurationManager.
-        ConnectionStrings["TestConnectionString"].ConnectionString;
-
-
-
-
-
-
-                var ss = assets;
-
+                string connection = System.Configuration.ConfigurationManager. ConnectionStrings["TestConnectionString"].ConnectionString;
                 StringBuilder sb = new StringBuilder();
-
-
                 foreach (var asset in assets)
                 {
-
-
                     string sqlInsert =
-                            @"INSERT INTO [dbo].[Asset]
-                        ([AssetName]
-                        ,[Model]
-                        ,[Vendor]
-                        ,[Description])
-                        VALUES
-                        (
-                        N'" + asset.AssetName + "' ";
+                    @"INSERT INTO [dbo].[Asset]
+                    ([AssetName]
+                    ,[Model]
+                    ,[Vendor]
+                    ,[Description])
+                    VALUES
+                    (
+                    N'" + asset.AssetName + "' ";
                     sqlInsert += "  ,N'" + asset.Model + "'";
                     sqlInsert += "  ,N'" + asset.Vendor + "'";
                     sqlInsert += "  ,N'" + asset.Description + "'";
                     sqlInsert += ")";
 
                     sb.Append(sqlInsert);
-
-                  
-
                 }
-   
-
 
                 using (SqlConnection cn = new SqlConnection(connection))
                 {
-                    
                     SqlCommand cmd = new SqlCommand(sb.ToString(), cn);
                     cn.Open();
-                    cmd.ExecuteNonQuery();
-                    cn.Close(); 
+                    int record = cmd.ExecuteNonQuery();
+                    cn.Close();
+                    if (record > 1)
+                    {
+                        returnResponse = new ReturnResponse()
+                        {
+
+                            status = 1,
+                            returnMessage = "Saved Succesfully",
+                        };
+                    }
+                    else
+                    {
+                        returnResponse = new ReturnResponse()
+                        {
+                            status = 0,
+                            returnMessage = "no added fo any assset",
+                        };
+                    }
                 }
+                return returnResponse;
             }
             catch (Exception ex)
             {
-
-
- string message = ex.Message;
-            }
-
-
+                returnResponse = new ReturnResponse()
+                {
+                    status = 0,
+                    returnMessage = ex.Message,
+                };
+                return returnResponse;
+            } 
         }
-        
-
-
     }
-    public class Product
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string Category { get; set; }
-    }
+
     public class Asset
     {
         public string AssetID { get; set; }
         public string AssetName { get; set; }
         public string Model { get; set; }
         public string Vendor { get; set; }
-         public string Description { get; set; }
+        public string Description { get; set; }
+    }
+
+   public class ReturnResponse
+    {
+
+        public int  status { get; set; }
+        public string returnMessage { get; set; }
+
     }
 }
