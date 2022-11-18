@@ -100,6 +100,6 @@ function getProducts(data)
         data: JSON.stringify(data),
         url: "api/products/PostAssets",
         contentType: "application/json",
-        sucsss
+        
     });
 }
