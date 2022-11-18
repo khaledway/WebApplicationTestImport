@@ -18,10 +18,24 @@
     <script src="https://cdn.kendostatic.com/2014.3.1119/js/kendo.all.min.js"></script>
 </head>
 <body>
-<%--    <form id="form1" runat="server">
+
+
+
+
+    <div>
+        
+        
+        <h1>hint : please use this values for test</h1> 
         <div>
+        <label>  sheetID:     1Unojl6HwNgjofDEc8-WzTINLDmBn2xwyQeYCZtM3T68 </label>
         </div>
-    </form>--%>
+        <div>      <label> sheet name:Assets</label></div>
+  
+
+
+    </div>
+
+
 
     <input id="txtSheetID" type="text" placeholder="enter sheet ID" />
     <input id="txtSheetName" type="text" placeholder="enter sheet Name" />
