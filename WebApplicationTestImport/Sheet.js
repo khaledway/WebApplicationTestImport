@@ -78,6 +78,8 @@ function init()
 
         PupulateToKindo(colz, data);
 
+        getProducts();
+
     }).catch(err =>
     {
         console.log("error", err);
@@ -124,4 +126,16 @@ const colzArr = [];
         colzArr.push({ "field": s, "title": s.toUpperCase() });
     });
     return colzArr; 
+}
+
+
+function getProducts()
+{
+    debugger;
+    $.getJSON("api/products",
+        function (data) {
+
+            console.log(data)
+
+        });
 }
