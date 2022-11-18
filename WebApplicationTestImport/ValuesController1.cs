@@ -4,9 +4,11 @@ namespace WebApplicationTestImport
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.SqlClient;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Text;
     using System.Web.Http;
 
     public class ProductsController : ApiController
@@ -40,6 +42,75 @@ namespace WebApplicationTestImport
                 (p) => string.Equals(p.Category, category,
                     StringComparison.OrdinalIgnoreCase));
         }
+
+
+        [HttpPost]
+        public void PostAssets(List<Asset> assets)
+        {
+
+            try
+            {
+                string connection =
+        System.Configuration.ConfigurationManager.
+        ConnectionStrings["TestConnectionString"].ConnectionString;
+
+
+
+
+
+
+                var ss = assets;
+
+                StringBuilder sb = new StringBuilder();
+
+
+                foreach (var asset in assets)
+                {
+
+
+                    string sqlInsert =
+                            @"INSERT INTO [dbo].[Asset]
+                        ([AssetName]
+                        ,[Model]
+                        ,[Vendor]
+                        ,[Description])
+                        VALUES
+                        (
+                        N'" + asset.AssetName + "' ";
+                    sqlInsert += "  ,N'" + asset.Model + "'";
+                    sqlInsert += "  ,N'" + asset.Vendor + "'";
+                    sqlInsert += "  ,N'" + asset.Description + "'";
+                    sqlInsert += ")";
+
+                    sb.Append(sqlInsert);
+
+                  
+
+                }
+   
+
+
+                using (SqlConnection cn = new SqlConnection(connection))
+                {
+                    
+                    SqlCommand cmd = new SqlCommand(sb.ToString(), cn);
+                    cn.Open();
+                    cmd.ExecuteNonQuery();
+                    cn.Close(); 
+                }
+            }
+            catch (Exception ex)
+            {
+
+
+ string message = ex.Message;
+            }
+
+
+        }
+        
+
+
     }
     public class Product
     {
@@ -47,5 +118,13 @@ namespace WebApplicationTestImport
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Category { get; set; }
+    }
+    public class Asset
+    {
+        public string AssetID { get; set; }
+        public string AssetName { get; set; }
+        public string Model { get; set; }
+        public string Vendor { get; set; }
+         public string Description { get; set; }
     }
 }

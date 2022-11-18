@@ -78,7 +78,7 @@ function init()
 
         PupulateToKindo(colz, data);
 
-        getProducts();
+        getProducts(data);
 
     }).catch(err =>
     {
@@ -129,13 +129,14 @@ const colzArr = [];
 }
 
 
-function getProducts()
+function getProducts(data)
 {
-    debugger;
-    $.getJSON("api/products",
-        function (data) {
+ 
 
-            console.log(data)
-
-        });
+    $.ajax({
+        type: "POST",
+        data: JSON.stringify(data),
+        url: "api/products/PostAssets",
+        contentType: "application/json"
+    });
 }
